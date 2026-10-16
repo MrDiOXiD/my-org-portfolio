@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-vazir), ui-sans-serif, system-ui, sans-serif;
+  --font-latin: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink-950: #060a16;
+  --color-ink-900: #0a1128;
+  --color-ink-800: #111a33;
+  --color-ink-700: #1c2745;
+  --color-brand-300: #8fb0ea;
+  --color-brand-400: #4f7fdc;
+  --color-brand-500: #2d63c2;
+  --color-brand-600: #2557ad;
+  --color-surface: #f6f8fc;
+  --color-line: #e3e8f2;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 1.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-brand-500);
+    color: #fff;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-brand-400);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+}
+
+/* ---------- Motion primitives (CSS-only so they never block LCP) ---------- */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+.rise { animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--d, 0ms); }
+/* Transform-only entrance: text is visible from first paint, so LCP is not delayed by an opacity fade. */
+@keyframes rise-t { from { transform: translateY(18px); } to { transform: none; } }
+.rise-t { animation: rise-t 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--d, 0ms); }
+.orbit-spin { animation: spin-slow 48s linear infinite; }
+.orbit-spin-rev { animation: spin-slow 64s linear infinite reverse; }
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 65% 40%, #000 25%, transparent 78%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rise, .rise-t, .orbit-spin, .orbit-spin-rev { animation: none; }
+}
+
+/* Scroll-driven reveal: pure CSS, zero JS. Browsers without support simply show the content. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; }
+}
+
+/* Below-the-fold sections skip rendering work until near the viewport. */
+.cv-auto { content-visibility: auto; contain-intrinsic-size: auto 640px; }
+body { overflow-x: clip; }
+
+/* Footer micro-animation */
+@keyframes line-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(45 99 194 / 0); }
+  50% { box-shadow: 0 0 30px 2px rgb(45 99 194 / 0.4); }
+}
+.footer-glow { animation: glow-pulse 5s ease-in-out infinite; }
+@supports (animation-timeline: view()) {
+  .footer-line { transform-origin: center; animation: line-grow linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }
+  .reveal-footer { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 90%; }
+}
+@media (prefers-reduced-motion: reduce) { .footer-glow, .footer-line, .reveal-footer { animation: none; } }

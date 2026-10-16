@@ -1,0 +1,4 @@
+# چتراتک (Chatran)
+> تیم سه‌نفره طراحی محصول، توسعه فول‌استک و سئوی فنی. A three-person team: UI/UX design, full-stack development (Node.js, NestJS, Next.js, .NET) and technical SEO.
+
+- [صفحه اصلی](https://chatran.team/): خدمات، اعضای تیم، فرآیند همکاری و راه تماس
